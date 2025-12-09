@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Story Manager</title>
+    <style>
+        body { font-family: Arial; background: #f2f2f2; padding: 30px; }
+        .box { background: white; padding: 20px; border-radius: 10px; width: 550px; margin: auto; }
+        input, textarea { width: 100%; padding:10px; margin-top:10px; border-radius:5px; }
+        button { padding: 10px 20px; background: #007bff; color:white; border: none; border-radius:5px; margin-top:10px;}
+        table { width:100%; background:white; margin-top:20px; border-radius:10px; }
+        th, td { padding:10px; }
+        a { text-decoration:none; padding:5px 10px; border-radius:5px; }
+        .del { background:red; color:white; }
+        .edit { background:green; color:white; }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>Add New Story</h2>
+    <form action="/add" method="POST">
+        <input type="text" name="title" placeholder="Story Title" required>
+        <textarea name="content" placeholder="Write your story..." rows="4" required></textarea>
+        <button type="submit">Add Story</button>
+    </form>
+</div>
+
+<h2 style="text-align:center;">All Stories</h2>
+
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Story</th>
+        <th>Actions</th>
+    </tr>
+    {% for s in stories %}
+    <tr>
+        <td>{{ s[0] }}</td>
+        <td>{{ s[1] }}</td>
+        <td>{{ s[2] }}</td>
+        <td>
+            <a class="edit" href="/edit/{{ s[0] }}">Edit</a>
+            <a class="del" href="/delete/{{ s[0] }}">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+</body>
+</html>

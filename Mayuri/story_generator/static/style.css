@@ -1,0 +1,31 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #222;
+    color: white;
+    text-align: center;
+    padding: 40px;
+}
+
+h1 {
+    font-size: 40px;
+}
+
+button {
+    padding: 12px 25px;
+    font-size: 18px;
+    border: none;
+    background: orange;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: rgb(255, 180, 80);
+}
+
+#story {
+    margin-top: 25px;
+    font-size: 24px;
+    line-height: 1.5;
+    color: #00ff95;
+}
