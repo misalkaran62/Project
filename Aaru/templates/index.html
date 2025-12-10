@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Manager</title>
+    <style>
+        body { font-family: Arial; background: #f0f0f0; padding: 30px; }
+        .container { width: 800px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px gray; }
+        h2 { text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #aaa; padding: 8px; text-align: center; }
+        input, button { padding: 8px; margin-top: 5px; width: 100%; font-size: 14px; }
+        button { background: blue; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .stats { margin-top: 15px; font-weight: bold; color: green; text-align: center; }
+        .form-inline { display:flex; gap:5px; }
+        .form-inline input { width: calc(100% / 5 - 5px); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Student Manager</h2>
+
+        <!-- Add Student -->
+        <form action="/add" method="POST" class="form-inline">
+            <input type="text" name="name" placeholder="Name" required>
+            <input type="text" name="roll" placeholder="Roll No" required>
+            <input type="text" name="course" placeholder="Course" required>
+            <input type="text" name="year" placeholder="Year" required>
+            <input type="number" name="marks" placeholder="Marks" required>
+            <button type="submit">Add</button>
+        </form>
+
+        <!-- Search -->
+        <form action="/search" method="POST" style="margin-top:10px;">
+            <input type="text" name="search" placeholder="Search by Name or Roll">
+            <button type="submit">Search</button>
+        </form>
+
+        <!-- Stats -->
+        <div style="display:flex; gap:5px; margin-top:10px;">
+            <a href="/stats/highest"><button type="button">Highest Marks</button></a>
+            <a href="/stats/lowest"><button type="button">Lowest Marks</button></a>
+            <a href="/stats/count"><button type="button">Count Students</button></a>
+        </div>
+
+        {% if message %}
+        <p class="stats">{{ message }}</p>
+        {% endif %}
+
+        <!-- Student Table -->
+        {% if students %}
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Roll No</th>
+                <th>Course</th>
+                <th>Year</th>
+                <th>Marks</th>
+                <th>Actions</th>
+            </tr>
+            {% for id, s in students.items() %}
+            <tr>
+                <td>{{ id }}</td>
+                <td>{{ s.name }}</td>
+                <td>{{ s.roll }}</td>
+                <td>{{ s.course }}</td>
+                <td>{{ s.year }}</td>
+                <td>{{ s.marks }}</td>
+                <td>
+                    <form action="/update/{{id}}" method="POST" style="display:inline-block;">
+                        <input type="text" name="name" value="{{ s.name }}" required>
+                        <input type="text" name="roll" value="{{ s.roll }}" required>
+                        <input type="text" name="course" value="{{ s.course }}" required>
+                        <input type="text" name="year" value="{{ s.year }}" required>
+                        <input type="number" name="marks" value="{{ s.marks }}" required>
+                        <button type="submit">Update</button>
+                    </form>
+                    <a href="/delete/{{id}}"><button type="button">Delete</button></a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <p class="empty">No Data Available</p>
+        {% endif %}
+    </div>
+</body>
+</html>
