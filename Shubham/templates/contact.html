@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Contact Book — Stylish</title>
+
+  <style>
+    :root{
+      --bg:#0f1724;
+      --card:#0b1220;
+      --muted:#94a3b8;
+      --accent1:linear-gradient(135deg,#7c3aed,#06b6d4);
+      --glass: rgba(255,255,255,0.04);
+      --glass-2: rgba(255,255,255,0.03);
+      --glass-border: rgba(255,255,255,0.06);
+      --success:#10b981;
+      --danger:#ef4444;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+
+    /* Page layout */
+    html,body{height:100%;margin:0;background: radial-gradient(1000px 400px at 10% 10%, rgba(99,102,241,0.08), transparent), var(--bg); color:#e6eef8;}
+    .container{max-width:1100px;margin:32px auto;padding:28px;border-radius:16px;background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); box-shadow: 0 8px 30px rgba(2,6,23,0.6); border: 1px solid rgba(255,255,255,0.03);}
+
+    header{display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .logo{display:flex;align-items:center;gap:12px}
+    .logo .mark{width:56px;height:56px;border-radius:12px;background:var(--accent1);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(99,102,241,0.15);font-weight:700}
+    h1{margin:0;font-size:20px;letter-spacing:0.2px}
+    p.lead{margin:0;color:var(--muted);font-size:13px}
+
+    main{display:grid;grid-template-columns: 360px 1fr;gap:24px;margin-top:22px}
+    /* Left panel - forms */
+    .panel{background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02)); padding:18px;border-radius:12px;border:1px solid var(--glass-border)}
+    .panel h2{margin:0 0 12px 0;font-size:15px}
+    .field{display:flex;flex-direction:column;margin-bottom:10px}
+    .field input{background:transparent;border:1px solid var(--glass-border);padding:10px;border-radius:8px;color:inherit;outline:none}
+    .btn{display:inline-block;padding:10px 14px;border-radius:10px;background:var(--accent1);border:none;color:white;cursor:pointer;font-weight:600}
+    .btn.ghost{background:transparent;border:1px solid var(--glass-border);color:var(--muted)}
+    .small{font-size:13px;color:var(--muted);margin-top:8px}
+
+    /* Right panel - contacts */
+    .top-controls{display:flex;align-items:center;gap:12px;justify-content:space-between;margin-bottom:12px}
+    .stats{display:flex;gap:12px;align-items:center}
+    .stat{background:var(--glass);padding:8px 12px;border-radius:10px;font-size:13px;color:var(--muted);border:1px solid rgba(255,255,255,0.02)}
+    .grid{display:grid;grid-template-columns: repeat(auto-fill,minmax(240px,1fr));gap:12px}
+
+    .card{background: linear-gradient(180deg,var(--card), rgba(11,18,32,0.96)); padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.02);box-shadow: 0 6px 14px rgba(2,6,23,0.45)}
+    .card .title{display:flex;align-items:center;gap:12px}
+    .avatar{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#06b6d4,#7c3aed);display:flex;align-items:center;justify-content:center;font-weight:700}
+    .meta{color:var(--muted);font-size:13px;margin-top:8px}
+    .actions{margin-top:12px;display:flex;gap:8px}
+
+    a.link{color:inherit;text-decoration:none;padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.02);font-size:13px}
+    a.delete{background:transparent;border:1px solid rgba(255,255,255,0.05);color:var(--danger)}
+    a.update{background:transparent;border:1px solid rgba(255,255,255,0.05);color:var(--success)}
+    .empty{padding:28px;text-align:center;color:var(--muted);border-radius:10px;border:1px dashed rgba(255,255,255,0.02)}
+
+    footer{margin-top:18px;text-align:right;color:var(--muted);font-size:13px}
+
+    /* responsive */
+    @media (max-width:900px){
+      main{grid-template-columns:1fr; }
+      .logo .mark{width:48px;height:48px}
+    }
+
+    /* subtle hover */
+    .card:hover{transform:translateY(-4px);transition:transform .18s ease}
+    .btn:hover{opacity:0.95}
+    input::placeholder{color:rgba(230,238,248,0.35)}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <div class="mark">CB</div>
+        <div>
+          <h1>Contact Book</h1>
+          <p class="lead">Clean, fast and responsive contact manager</p>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:13px;color:var(--muted)">All contacts: <strong>{{ total }}</strong></div>
+        <div style="margin-top:6px"><a href="/exit" class="btn ghost" style="padding:8px 12px">Close App</a></div>
+      </div>
+    </header>
+
+    <main>
+      <!-- LEFT: add / search -->
+      <aside class="panel" aria-labelledby="leftpanel">
+        <h2 id="leftpanel">Add Contact</h2>
+        <form action="/add" method="POST">
+          <div class="field"><input name="name" placeholder="Full name" required /></div>
+          <div class="field"><input name="age" placeholder="Age" /></div>
+          <div class="field"><input name="email" type="email" placeholder="Email" /></div>
+          <div class="field"><input name="mobile" placeholder="Mobile" /></div>
+          <div style="display:flex;gap:10px">
+            <button class="btn" type="submit">Add Contact</button>
+            <button type="reset" class="btn ghost">Reset</button>
+          </div>
+          <p class="small">Tip: Use the search box to quickly filter contacts on the right.</p>
+        </form>
+
+        <hr style="border:none;height:1px;background:var(--glass-2);margin:14px 0;border-radius:2px">
+
+        <h2>Search</h2>
+        <form onsubmit="event.preventDefault(); clientFilter();" style="display:flex;gap:8px">
+          <input id="clientSearch" type="text" placeholder="Type name to filter (client-side)" oninput="clientFilter()" />
+          <button onclick="document.forms[1].submit()" class="btn ghost" title="Server search">Server</button>
+        </form>
+
+      </aside>
+
+      <!-- RIGHT: contacts -->
+      <section>
+        <div class="top-controls">
+          <div class="stats">
+            <div class="stat">Total: <strong style="margin-left:6px">{{ total }}</strong></div>
+            <div class="stat">Saved: <strong style="margin-left:6px">{{ contacts|length }}</strong></div>
+          </div>
+
+          <div style="display:flex;gap:8px;align-items:center">
+            <input id="sortToggle" type="checkbox" onchange="sortCards()" /> <label style="color:var(--muted);font-size:13px">Sort A→Z</label>
+          </div>
+        </div>
+
+        {% if contacts %}
+        <div id="contactsGrid" class="grid">
+          {% for name, c in contacts.items() %}
+          <div class="card contact-card" data-name="{{ name|lower }}">
+            <div class="title">
+              <div class="avatar">{{ name[0] }}</div>
+              <div>
+                <div style="font-weight:700">{{ name }}</div>
+                <div style="font-size:13px;color:var(--muted)">{{ c.email or '—' }}</div>
+              </div>
+            </div>
+
+            <div class="meta">
+              Age: <strong>{{ c.age or '—' }}</strong> &nbsp; • &nbsp; Mobile: <strong>{{ c.mobile or '—' }}</strong>
+            </div>
+
+            <div class="actions">
+              <a class="link update" href="/update/{{ name }}" title="Update">Update</a>
+              <a class="link delete" href="/delete/{{ name }}" title="Delete" onclick="return confirm('Delete {{ name }} ?')">Delete</a>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty">No contacts yet — add someone using the form on the left.</div>
+        {% endif %}
+
+        <footer>
+          <span class="small">Built for quick demos • Responsive • Client-side search</span>
+        </footer>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // client-side quick filter (non-destructive)
+    function clientFilter(){
+      const q = (document.getElementById('clientSearch').value || '').trim().toLowerCase();
+      const cards = document.querySelectorAll('.contact-card');
+      cards.forEach(c => {
+        const name = c.getAttribute('data-name') || '';
+        c.style.display = (q === '' || name.includes(q)) ? '' : 'none';
+      });
+    }
+
+    // simple alphabetical sort of grid cards
+    function sortCards(){
+      const grid = document.getElementById('contactsGrid');
+      if(!grid) return;
+      const cards = Array.from(grid.children).filter(el => el.classList.contains('contact-card'));
+      const asc = document.getElementById('sortToggle').checked;
+      cards.sort((a,b) => {
+        const A = a.getAttribute('data-name') || '';
+        const B = b.getAttribute('data-name') || '';
+        return asc ? (A.localeCompare(B)) : 0;
+      });
+      cards.forEach(c => grid.appendChild(c)); // reflow
+    }
+  </script>
+</body>
+</html>
